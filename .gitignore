@@ -7,6 +7,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+.metadata
+
 client/node_modules
 client/dist
 client/dist-ssr

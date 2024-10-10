@@ -15,6 +15,7 @@ import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.server.message.Message;
 import com.server.utils.CallAccepted;
 import com.server.utils.CallUserIncommingMesssage;
+import com.server.utils.ChatMessage;
 
 
 
@@ -32,15 +33,14 @@ public class SocketIOController {
 		 this.socketServer = socketServer;
 		 this.socketServer.addConnectListener(onUserConnectWithSocket);
 		 this.socketServer.addDisconnectListener(onUserDisonnnect);
+		 //Listner for joining room
 		 this.socketServer.addEventListener("join-room", Message.class, onSendMessage);
 		 this.socketServer.addEventListener("call-user",CallUserIncommingMesssage.class,callUser);
 		 this.socketServer.addEventListener("call-accepted", CallAccepted.class, callAccepted);
+		 
+		 this.socketServer.addEventListener("send:incom:message", ChatMessage.class, incommingChatMessage);
 	}
 	 
-	
-
-	
-
 
 
 	public ConnectListener onUserConnectWithSocket = new ConnectListener() {
@@ -61,6 +61,19 @@ public class SocketIOController {
 			// TODO Auto-generated method stub
 			
 			System.out.println("User disconnected");
+			
+		}
+	};
+	
+	private DataListener<ChatMessage> incommingChatMessage = new DataListener<ChatMessage>() {
+		
+		@Override
+		public void onData(SocketIOClient client, ChatMessage data, AckRequest ackSender) throws Exception {
+			// TODO Auto-generated method stub
+			System.out.println(" Incomming Chat Message from "+data.getToEmail()+" "+data.getMessage());
+			String socketId = emailToSocketMapping.get(data.getToEmail());
+			System.out.println("Incomming Chat Message SocketId :- "+socketId);
+			socketServer.getClient(UUID.fromString(socketId)).sendEvent("send:out:message", data);
 			
 		}
 	};

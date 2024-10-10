@@ -23,7 +23,7 @@
 
 - Netty socketio is the socket.io implementation for java backend
 
-    @Component
+    	@Component
     	public class SocketIOConfig {
     		@Value("${socket.host}")
     		private String SOCKETHOST;
